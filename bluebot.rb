@@ -94,6 +94,21 @@ bot = Cinch::Bot.new do
       m.reply "Quotes matching \"#{keywords}\": #{indexes}."
     end
   end
+
+  on :message, "!seen /\A(\S+)/"  do |m, username|
+     users = db["seen"].find({"who" => username.downcase }).to_a
+
+     lastseen = users.nil? "Never see him" : users["date"]
+     "Last seen #{username}: #{lastseen.inspect}."
+    
+  on :offline do |username|
+      lastseen=db["seen"].find({"who" => username.downcase})
+      if lastseen.nil?
+        db["seen"].insert({"who" => username.downcase, "date" => Time.new})
+      else
+        db["seen"].update({"who" => username.downcase}, {"$set" => {"date" => Time.new}})
+      end
+  end
 end
 
 def get_quote(db, num)
