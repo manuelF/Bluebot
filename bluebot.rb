@@ -47,11 +47,11 @@ bot = Cinch::Bot.new do
   # Karma
 
   on :message, /\A(\S+)\+\+/ do |m, what|
-    add_karma(db, what, 1)
+    add_karma(db, what, 1) unless (m.user.nick==what)
   end
 
   on :message, /\A(\S+)--/ do |m, what|
-    add_karma(db, what, -1)
+    add_karma(db, what, -1) unless (m.user.nick==what)
   end
 
   on :message, /\A!karma\Z/ do |m, num|
