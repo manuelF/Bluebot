@@ -97,7 +97,7 @@ bot = Cinch::Bot.new do
 
   #Seen
   
-  on :connect, do |m|
+  on :connect do |m|
     userlist=m.channel.users.each{|key| User("#{key}").monitor}
   end
 
