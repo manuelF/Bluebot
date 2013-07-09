@@ -95,7 +95,9 @@ bot = Cinch::Bot.new do
     end
   end
 
-  on :message, "!seen /\A(\S+)/"  do |m, username|
+  #Seen
+  
+  on :message, /\A!seen \A(\S+)/  do |m, username|
      users = db["seen"].find({"who" => username.downcase }).to_a
      lastseen=""
      if users.nil?
