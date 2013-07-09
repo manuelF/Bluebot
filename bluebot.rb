@@ -97,7 +97,7 @@ bot = Cinch::Bot.new do
 
   #Seen
   
-  on :message, /\A!seen \A(\S+)/  do |m, username|
+  on :message, /\A!seen (\S+)/  do |m, username|
      users = db["seen"].find({"who" => username.downcase }).next
      if users.nil?
          m.reply "Never seen him"         
