@@ -98,11 +98,11 @@ bot = Cinch::Bot.new do
   #Seen
   
   on :message, /\A!seen \A(\S+)/  do |m, username|
-     users = db["seen"].find({"who" => username.downcase }).to_a
-     lastseen=""
+     users = db["seen"].find({"who" => username.downcase }).next
      if users.nil?
          m.reply "Never seen him"         
      else
+         lastseen=users["date"]
          m.reply "Last seen #{username}: #{lastseen.inspect}."
      end
   end     
