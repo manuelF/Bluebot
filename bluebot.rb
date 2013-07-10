@@ -116,8 +116,9 @@ bot = Cinch::Bot.new do
   end     
 
     
-  on :offline do |m, username|
-      user=db["seen"].find({"who" => username.downcase}).next
+  on :offline do |m, userobj|
+      username=userobj.nick
+      tuser=db["seen"].find({"who" => username.downcase}).next
       if lastseen.nil?
         db["seen"].insert({"who" => username.downcase, "date" => Time.new})
       else
