@@ -99,32 +99,35 @@ bot = Cinch::Bot.new do
   
   on :message, /\A!seen (\S+)/  do |m, username|
 
-     userlist=m.channel.users.each{|key| User("#{key}").monitor}
-     if userlist.find("#{username}").nil?
-         users = db["seen"].find({"who" => username.downcase }).next
+     userlist=m.channel.users
+     userlist.each{ |u| add_or_update_user(db,u)}
+     online=userlist.find({"nick" => "#{username}"}).next
+     
+     if online.nil?
+        users = db["seen"].find({"user" => username.downcase }).next
          if users.nil?
-             m.reply "Never seen him"         
+             m.reply "Never seen him"
          else
              lastseen=users["date"]
              m.reply "Last seen #{username}: #{lastseen.inspect}."
          end
-     else
+     else         
          m.reply "#{username} is online now."
      end
   end     
 
-    
-  on :offline do |m, userobj|
-      username=userobj.nick
-      userobj.unmonitor
-      tuser=db["seen"].find({"who" => username.downcase}).next
-      if lastseen.nil?
-        db["seen"].insert({"who" => username.downcase, "date" => Time.new})
-      else
-        db["seen"].update({"who" => username.downcase}, {"$set" => {"date" => Time.new}})
-      end
-  end
 end
+
+def add_or_update_user(db, what)    
+  item  = db["seen"].find({"user" => what.downcase}).next
+  if item.nil?
+    db["seen"].insert({"user" => what.downcase, "date" => Time.new})
+  else
+    db["seen"].update({"user" => what.downcase}, {"$set" => {"date" => Time.new}})
+  end    
+
+end
+
 
 def get_quote(db, num)
   begin
