@@ -97,14 +97,10 @@ bot = Cinch::Bot.new do
 
   #Seen
   
-  on :connect do |m|
-    userlist=m.channel.users.each{|key| User("#{key}").monitor}
-  end
-
   on :message, /\A!seen (\S+)/  do |m, username|
-     if User("#{username}").online?
-         m.reply "#{username} is online now."
-     else
+
+     userlist=m.channel.users.each{|key| User("#{key}").monitor}
+     if userlist.find("#{username}").nil?
          users = db["seen"].find({"who" => username.downcase }).next
          if users.nil?
              m.reply "Never seen him"         
@@ -112,13 +108,14 @@ bot = Cinch::Bot.new do
              lastseen=users["date"]
              m.reply "Last seen #{username}: #{lastseen.inspect}."
          end
+     else
+         m.reply "#{username} is online now."
      end
   end     
 
     
   on :offline do |m, userobj|
       username=userobj.nick
-      m.reply "adios #{username}"
       userobj.unmonitor
       tuser=db["seen"].find({"who" => username.downcase}).next
       if lastseen.nil?
