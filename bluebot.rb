@@ -118,6 +118,7 @@ bot = Cinch::Bot.new do
     
   on :offline do |m, userobj|
       username=userobj.nick
+      m.reply "adios #{username}"
       userobj.unmonitor
       tuser=db["seen"].find({"who" => username.downcase}).next
       if lastseen.nil?
